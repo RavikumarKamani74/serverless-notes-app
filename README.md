@@ -4,7 +4,7 @@ This is a simple full-stack **serverless notes app** built with:
 - **Amazon API Gateway** – to route HTTP requests
 - **Amazon DynamoDB** – to store notes
 
---https://zhvqyenpqh.execute-api.ap-south-2.amazonaws.com/dev/index.html
+--https://zhvqyenpqh.execute-api.ap-south-2.amazonaws.com/dev/index.html - this is API URL
 
 ---
 
