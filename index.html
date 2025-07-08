@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Note App (DynamoDB)</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+    h1 { text-align: center; }
+    textarea { width: 100%; height: 100px; margin-top: 10px; }
+    button { padding: 10px 20px; margin-top: 10px; }
+    .note { border: 1px solid #ccc; padding: 10px; margin-top: 10px; border-radius: 5px; background: #f9f9f9; }
+  </style>
+</head>
+<body>
+  <h1>📝 My Notes</h1>
+
+  <textarea id="noteInput" placeholder="Write a new note..."></textarea><br>
+  <button onclick="addNote()">Add Note</button>
+
+  <h2>Saved Notes:</h2>
+  <div id="notesContainer"></div>
+
+  <script>
+    // ✅ Dynamically detect base path like /dev or /prod
+    const apiBaseUrl = window.location.origin + window.location.pathname.replace(/\/index\.html$/, '').replace(/\/$/, '');
+
+    async function addNote() {
+      const note = document.getElementById("noteInput").value.trim();
+      if (!note) return alert("Please enter a note!");
+
+      const response = await fetch(`${apiBaseUrl}/note`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: note })
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        document.getElementById("noteInput").value = "";
+        loadNotes();
+      } else {
+        alert(result.error || "Failed to save note.");
+      }
+    }
+
+    async function loadNotes() {
+      try {
+        const response = await fetch(`${apiBaseUrl}/note`);
+        const notes = await response.json();
+        const container = document.getElementById("notesContainer");
+        container.innerHTML = "";
+
+        notes.reverse().forEach(note => {
+          const div = document.createElement("div");
+          div.className = "note";
+          div.textContent = note.content;
+          container.appendChild(div);
+        });
+      } catch (err) {
+        console.error("Error loading notes", err);
+        document.getElementById("notesContainer").innerText = "Failed to load notes.";
+      }
+    }
+
+    // Load notes when page loads
+    loadNotes();
+  </script>
+</body>
+</html>
